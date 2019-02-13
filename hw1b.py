@@ -101,19 +101,62 @@ def MLR(X, y, regressor):
 #     print result.summary()
 
 colors= ['b', 'g','r','c','m', 'y', 'k']
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Perceptron
+from sklearn.pipeline import make_pipeline
 # PART 3
-for i in range(2,8):
-    regressor = LinearRegression()
-    X_evaluate = poly_feature(Xtrain, i)
-    #OLS_mult(Ytrain, X_evaluate)
-    reg_mult = MLR(X_evaluate, Ytrain, regressor=regressor)
-    coef = reg_mult.coef_
-    X_evaluate_test = poly_feature(Xtest, i)
+lw = 2
 
-    y_value = np.dot( X_evaluate_test, coef.T)
-    #X_evaluate_test = poly_feature(Xtest, i)
-    #y_evaluate_test = reg_mult.predict(X_evaluate_test)
-    plt.plot(Xtest, regressor.predict(Xtest), color = colors[i])
+#X = Xtrain[:, np.newaxis]
+#X_plot = Xtest[:, np.newaxis]
+import operator
+from sklearn.metrics import mean_squared_error, r2_score
+Xtrain2 = Xtrain
+Xtest2 = Xtest
+for i in range(2,8):
+    polynomial_features = PolynomialFeatures(degree=i)
+    x_poly = polynomial_features.fit_transform(Xtrain2)
+    x_poly_test = polynomial_features.fit_transform(Xtest2)
+
+    model = LinearRegression()
+    model.fit(x_poly, Ytrain)
+    y_poly_pred = model.predict(x_poly_test)
+
+    sort_axis = operator.itemgetter(0)
+    sorted_zip = sorted(zip(Xtest, y_poly_pred), key=sort_axis)
+    x, y_poly_pred = zip(*sorted_zip)
+    plt.plot(x, y_poly_pred, color=colors[i-2], label="degree %d" % i)
+
+    rmse = np.sqrt(mean_squared_error(Ytest, y_poly_pred))
+    r2 = r2_score(Ytest, y_poly_pred)
+    print("Degree " + str(i) + " RMSE: " + str(rmse))
+    print("Degree " + str(i) +  " R2: " + str(r2))
+    #plt.show()
+    # Xtrain2 = Xtrain2[:, np.newaxis]
+    # Xtest2 = Xtest[:, np.newaxis]
+
+
+    # model = make_pipeline(PolynomialFeatures(i), Ridge())
+    # model.fit(Xtrain, Ytrain)
+    # y_plot = model.predict(Xtest)
+    # plt.plot(Xtest, y_plot, color=colors[i-2], linewidth=lw,
+    #          label="degree %d" % i)
+
+    # poly = PolynomialFeatures(degree=i)
+    # X_ = poly.fit_transform(Xtrain)
+    # predict_ = poly.fit_transform(Ytest)
+    # regressor = LinearRegression()
+    # X_evaluate = poly_feature(Xtrain, i)
+    # #OLS_mult(Ytrain, X_evaluate)
+    # reg_mult = MLR(X_evaluate, Ytrain, regressor=regressor)
+    # coef = reg_mult.coef_
+    # X_evaluate_test = poly_feature(Xtest, i)
+    #
+    # y_value = np.dot( X_evaluate_test, coef.T)
+    # #X_evaluate_test = poly_feature(Xtest, i)
+    # #y_evaluate_test = reg_mult.predict(X_evaluate_test)
+    # plt.plot(Xtest, y_value, color = colors[i]) #regressor.predict(Xtest), color = colors[i])
 
 
 plt.legend(loc='upper left')
