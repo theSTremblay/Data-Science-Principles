@@ -30,13 +30,6 @@ SoftwareSerial bluefruitSS = SoftwareSerial(BLUEFRUIT_SWUART_TXD_PIN, BLUEFRUIT_
 Adafruit_BluefruitLE_UART ble(bluefruitSS, BLUEFRUIT_UART_MODE_PIN,
                       BLUEFRUIT_UART_CTS_PIN, BLUEFRUIT_UART_RTS_PIN);
 
-
- 
-// Connect display via  i2c, default address #0 (A0-A2 not jumpered)
-//Adafruit_LiquidCrystal lcd(0);
- 
-// These values are for calculating a mathematical median for a number of samples as
-// suggested by Maxbotix instead of a mathematical average
 int8_t arraysize = 9; // quantity of values to find the median (sample size). Needs to be an odd number
 
 //declare an array to store the samples. not necessary to zero the array values here, it just makes the code clearer
@@ -50,6 +43,13 @@ int rangefinder_flag = 0;
 
 // If using software serial, keep this line enaSeriald
 // (you can change the pin numbers to match your wiring):
+
+//DHRUV LOOK HERE!!!
+//!!!!!!!!!!!!!!!!!!!!!
+
+// If the above code is not transmitting try uncommetning this line.
+//I thought I remembered it being uncommented
+
 //SoftwareSerial mySerial(3, 2);
 
 // If using hardware serial (e.g. Arduino Mega), comment out the
@@ -58,18 +58,6 @@ int rangefinder_flag = 0;
 
 //HardwareSerial mySerial = Serial1;
 
-
-//Adafruit_GPS GPS(&mySerial);
-
-
-// Set GPSECHO to 'false' to turn off echoing the GPS data to the Serial console
-// Set to 'true' if you want to debug and listen to the raw GPS sentences. 
-//#define GPSECHO  false
-
-// this keeps track of whether we're using the interrupt
-// off by default!
-//boolean usingInterrupt = false;
-//void useInterrupt(boolean); // Func prototype keeps Arduino 0023 happy
 
 // A small helper
 void error(const __FlashStringHelper*err) {
@@ -150,13 +138,8 @@ bool blue_send(String range)
   // Check for incoming characters from Bluefruit
   //ble.println("AT+BLEUARTRX");
     //ble.print("AT+BLEUARTTX=");
-    /*Serial.println(range);
-    Serial.println(GPS.latitude,4);
-    Serial.println(GPS.longitude,4);*/
     bluefruitSS.listen();
 
-    //if (Serial.available()){
-    //ble.listen();
     uint32_t timer2 = millis();
     while (millis()- timer2 < 100){
     //while (ble.available()) {
@@ -171,11 +154,6 @@ bool blue_send(String range)
    // }
     //Serial.print(ble.available());
     }
-    /*else{
-      Serial.print("1.7676767");
-    }*/
-    //Serial.println(bluefruitSS.available());
-    //mySerial.listen();
      return true;
 }
 
